@@ -5,20 +5,124 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentBackground = 0;
     const backgrounds = ['sunset-1', 'sunset-2', 'sunset-3', 'sunset-4'];
 
-    // Create initial background hearts
+    // Create initial effects
     createBackgroundHearts();
+    createParticles();
+    createSnowfall();
+
+    // Create snowfall effect
+    function createSnowfall() {
+        const snowflakes = ['❄', '❅', '❆'];
+        const numSnowflakes = 30;
+        
+        for (let i = 0; i < numSnowflakes; i++) {
+            createSnowflake(snowflakes);
+        }
+    }
+
+    function createSnowflake(snowflakes) {
+        const snowflake = document.createElement('div');
+        snowflake.className = 'snowflake';
+        snowflake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
+        
+        // Random position
+        const startX = Math.random() * window.innerWidth;
+        snowflake.style.left = `${startX}px`;
+        
+        // Random size
+        const size = 0.8 + Math.random() * 1.2;
+        snowflake.style.fontSize = `${size}rem`;
+        
+        // Random animation duration
+        const duration = 5 + Math.random() * 10;
+        snowflake.style.animationDuration = `${duration}s`;
+        
+        // Random opacity
+        snowflake.style.opacity = (0.3 + Math.random() * 0.7).toString();
+        
+        document.body.appendChild(snowflake);
+        
+        // Remove and recreate snowflake after animation
+        setTimeout(() => {
+            snowflake.remove();
+            createSnowflake(snowflakes);
+        }, duration * 1000);
+    }
+
+    // Enhanced sparkle creation
+    function createSparkles(element) {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        for (let i = 0; i < 16; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            
+            // Random direction and distance
+            const angle = (i * 22.5) + Math.random() * 15;
+            const distance = 40 + Math.random() * 40;
+            const tx = Math.cos(angle * Math.PI / 180) * distance;
+            const ty = Math.sin(angle * Math.PI / 180) * distance;
+            
+            // Random size
+            const size = 2 + Math.random() * 3;
+            sparkle.style.width = `${size}px`;
+            sparkle.style.height = `${size}px`;
+            
+            sparkle.style.setProperty('--tx', `${tx}px`);
+            sparkle.style.setProperty('--ty', `${ty}px`);
+            sparkle.style.left = `${centerX}px`;
+            sparkle.style.top = `${centerY}px`;
+            
+            document.body.appendChild(sparkle);
+            
+            // Remove sparkle after animation
+            setTimeout(() => sparkle.remove(), 2000);
+        }
+    }
 
     // Handle background change when clicking 'C'
     letterC.addEventListener('click', () => {
         sunsetBg.classList.remove(backgrounds[currentBackground]);
         currentBackground = (currentBackground + 1) % backgrounds.length;
         sunsetBg.classList.add(backgrounds[currentBackground]);
+        createSparkles(letterC);
     });
 
-    // Create floating hearts when clicking the main heart
+    // Create floating hearts and sparkles when clicking the main heart
     mainHeart.addEventListener('click', () => {
         createFloatingHearts();
+        createSparkles(mainHeart);
+        mainHeart.classList.add('clicked');
+        setTimeout(() => mainHeart.classList.remove('clicked'), 1000);
     });
+
+    // Create floating particles in the background
+    function createParticles() {
+        const numParticles = 15;
+        
+        for (let i = 0; i < numParticles; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // Random position
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            
+            // Random size
+            const size = 20 + Math.random() * 30;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // Random position and animation delay
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            
+            document.body.appendChild(particle);
+        }
+    }
 
     function createBackgroundHearts() {
         const numHearts = 20; // Increased number of background hearts
@@ -101,6 +205,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const container = document.querySelector('.floating-hearts-container');
             container.innerHTML = ''; // Clear existing hearts
             createBackgroundHearts(); // Recreate background hearts
+            
+            // Remove and recreate particles and snowflakes
+            document.querySelectorAll('.particle, .snowflake').forEach(p => p.remove());
+            createParticles();
+            createSnowfall();
         }, 250);
     });
 }); 
