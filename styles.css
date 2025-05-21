@@ -32,9 +32,10 @@ body {
     background-size: cover;
     background-position: center;
     z-index: -1;
-    transition: all 1s ease;
+    transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
+    animation: bg-pulse 8s ease-in-out infinite;
 }
 
 .sunset-bg::before {
@@ -49,6 +50,25 @@ body {
         rgba(0, 0, 0, 0.2) 100%
     );
     pointer-events: none;
+}
+
+.sunset-bg::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg,
+        rgba(0, 0, 0, 0.1) 0%,
+        rgba(0, 0, 0, 0) 50%,
+        rgba(0, 0, 0, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+
+.sunset-bg:hover::after {
+    opacity: 1;
 }
 
 .container {
@@ -68,8 +88,9 @@ body {
 
 .name-container {
     position: relative;
-    padding: 0;
+    padding: 2rem;
     width: 100%;
+    animation: container-glow 4s ease-in-out infinite;
 }
 
 .name {
@@ -82,18 +103,52 @@ body {
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    background: none;
+    background: linear-gradient(
+        45deg,
+        #ffffff,
+        #ffd93d,
+        #6c5ce7,
+        #a8e6cf,
+        #ffffff
+    );
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: rainbow-gradient 8s ease infinite;
+    text-shadow: none;
     white-space: nowrap;
+}
+
+.name::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: radial-gradient(circle at center, 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    animation: sparkle 3s ease-in-out infinite;
+    z-index: -1;
 }
 
 .letter-c {
     cursor: pointer;
-    transition: transform 0.3s ease;
-    text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    position: relative;
+    display: inline-block;
+    color: #ffffff;
+    font-weight: bold;
 }
 
 .letter-c:hover {
-    transform: scale(1.2);
+    transform: scale(1.2) rotate(5deg);
+    color: #ffffff;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 1);
 }
 
 .heart {
@@ -101,15 +156,32 @@ body {
     color: #ff4b4b;
     cursor: pointer;
     animation: pulse 1.5s ease-in-out infinite;
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
     display: inline-block;
     vertical-align: middle;
     text-shadow: 3px 3px 15px rgba(0, 0, 0, 0.4);
-    filter: drop-shadow(0 0 5px rgba(255, 75, 75, 0.5));
+    filter: drop-shadow(0 0 8px rgba(255, 75, 75, 0.6));
+    position: relative;
 }
 
-.heart:hover {
-    transform: scale(1.2);
+.heart::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center,
+        rgba(255, 75, 75, 0.2) 0%,
+        rgba(255, 75, 75, 0) 70%);
+    border-radius: 50%;
+    animation: heartGlow 2s ease-in-out infinite;
+    z-index: -1;
+}
+
+.heart::before {
+    display: none;
 }
 
 .floating-heart {
@@ -146,10 +218,13 @@ body {
 /* Animations */
 @keyframes float {
     0%, 100% {
-        transform: translateY(0);
+        transform: translateY(0) rotate(0deg);
     }
-    50% {
-        transform: translateY(-20px);
+    25% {
+        transform: translateY(-10px) rotate(2deg);
+    }
+    75% {
+        transform: translateY(10px) rotate(-2deg);
     }
 }
 
@@ -204,6 +279,104 @@ body {
     }
 }
 
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+@keyframes heartGlow {
+    0%, 100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+}
+
+/* Sparkle effect */
+.sparkle {
+    position: absolute;
+    pointer-events: none;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.8) 30%,
+        rgba(255, 255, 255, 0) 70%);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    animation: sparkle-move 2s linear infinite;
+}
+
+@keyframes sparkle-move {
+    0% {
+        transform: translate(0, 0) scale(0);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--tx), var(--ty)) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Particle effect */
+.particle {
+    position: fixed;
+    pointer-events: none;
+    background: radial-gradient(circle at center, 
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    animation: particle-float 6s ease-in-out infinite;
+}
+
+@keyframes particle-float {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translateY(-20px) scale(1.2);
+        opacity: 0.6;
+    }
+}
+
+/* Remove music toggle styles */
+.music-toggle,
+.music-toggle:hover,
+.music-toggle i {
+    display: none;
+}
+
+/* Enhanced name hover effect */
+.name-container:hover .name {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+/* Heart color transition */
+.heart.clicked {
+    animation: heart-color-change 1s ease-in-out;
+}
+
+@keyframes heart-color-change {
+    0% { color: #ff4b4b; }
+    50% { color: #ff69b4; }
+    100% { color: #ff4b4b; }
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .name {
@@ -216,6 +389,38 @@ body {
     }
     
     .floating-heart {
+        font-size: 1.2rem;
+    }
+
+    .name::before {
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+    }
+
+    .heart::after {
+        width: 80%;
+        height: 80%;
+    }
+
+    .music-toggle {
+        width: 35px;
+        height: 35px;
+        bottom: 15px;
+        right: 15px;
+    }
+    
+    .music-toggle i {
+        font-size: 1rem;
+    }
+
+    .heart::before {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.8rem;
+    }
+    
+    .snowflake {
         font-size: 1.2rem;
     }
 }
@@ -232,6 +437,18 @@ body {
 
     .floating-heart {
         font-size: 1rem;
+    }
+
+    .name::before {
+        top: -3px;
+        left: -3px;
+        right: -3px;
+        bottom: -3px;
+    }
+
+    .heart::after {
+        width: 70%;
+        height: 70%;
     }
 }
 
@@ -282,4 +499,64 @@ body {
 html {
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
+}
+
+/* Enhanced name container with glow */
+@keyframes container-glow {
+    0%, 100% {
+        filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+    }
+    50% {
+        filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.4));
+    }
+}
+
+/* Rainbow gradient effect for name */
+@keyframes rainbow-gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Snowflake effect */
+.snowflake {
+    position: fixed;
+    color: white;
+    font-size: 1.5rem;
+    pointer-events: none;
+    animation: snowfall linear infinite;
+    opacity: 0.8;
+    z-index: 1;
+}
+
+@keyframes snowfall {
+    0% {
+        transform: translateY(-10vh) rotate(0deg);
+    }
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+    }
+}
+
+/* Subtle background pulse */
+@keyframes bg-pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+.name .letter-c {
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    color: #ffffff;
 } 
